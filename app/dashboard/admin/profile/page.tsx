@@ -4,8 +4,6 @@
 
 import { useRouter } from "next/navigation";
 import { useProfile } from "@/hooks/useProfile";
-import Navbar from "@/components/NavbarWhite";
-import Footer from "@/components/Footer";
 
 export default function UserProfile() {
   const { user } = useProfile();

@@ -37,19 +37,12 @@ export default function EditArticleForm({
   initialData,
   onCancel,
 }: EditArticleFormProps) {
-  const [thumbnail, setThumbnail] = useState<File | null>(null);
   const [title, setTitle] = useState(initialData.title || ""); // Set dari initialData
   const [category, setCategory] = useState(initialData.category?.id || ""); // Set dari initialData
   const [content, setContent] = useState(initialData.content || "");
   const [categories, setCategories] = useState<{ id: string; name: string }[]>(
     []
   );
-
-  const handleThumbnailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      setThumbnail(e.target.files[0]);
-    }
-  };
 
   const fetchCategories = async () => {
     const token = getTokenFromCookie();
@@ -137,26 +130,6 @@ export default function EditArticleForm({
       </button>
 
       <div className="bg-white p-6 rounded-lg shadow">
-        {/* Thumbnail */}
-        <div className="mb-6">
-          <label className="block mb-2 font-semibold">Thumbnails</label>
-          <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center text-center cursor-pointer">
-            <Input
-              type="file"
-              accept="image/jpeg,image/png"
-              onChange={handleThumbnailChange}
-              className="hidden"
-              id="thumbnail"
-            />
-            <label htmlFor="thumbnail" className="cursor-pointer">
-              <p className="text-gray-400">Click to select files</p>
-              <p className="text-gray-300 text-sm">
-                Support File Type : jpg or png
-              </p>
-            </label>
-          </div>
-        </div>
-
         {/* Title */}
         <div className="mb-6">
           <label className="block mb-2 font-semibold">Title</label>

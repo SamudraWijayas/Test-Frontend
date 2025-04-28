@@ -2,13 +2,11 @@
 
 import { useProfile } from "@/hooks/useProfile";
 import Link from "next/link";
-import { LogOut } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 
 export function Header() {

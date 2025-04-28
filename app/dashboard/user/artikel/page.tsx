@@ -55,13 +55,12 @@ export default function Home() {
   const [articles, setArticles] = useState<Article[]>(dummyArticles); // Initialize with dummy data
   const [currentPage, setCurrentPage] = useState(1);
   const [totalArticles, setTotalArticles] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
+  const [, setIsLoading] = useState(true);
   const [categories, setCategories] = useState<{ id: string; name: string }[]>(
     []
   );
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const searchQueryParam = searchQuery ? `&search=${searchQuery}` : "";
 
   // Reset currentPage to 1 when selectedCategory changes
   React.useEffect(() => {
@@ -137,8 +136,7 @@ export default function Home() {
   const totalPages = Math.ceil(totalArticles / ITEMS_PER_PAGE);
 
   // Menghitung artikel yang ditampilkan
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE + 1;
-  const endIndex = Math.min(currentPage * ITEMS_PER_PAGE, totalArticles);
+
 
   const handlePrevPage = () => {
     if (currentPage > 1) setCurrentPage(currentPage - 1);
