@@ -14,6 +14,9 @@ import {
   SheetTitle,
   SheetFooter,
 } from "@/components/ui/sheet";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import axios from "axios";
 
 interface Category {
   id: string;
@@ -67,12 +70,14 @@ export default function ArtikelListPage() {
 
   const fetchCategories = async () => {
     try {
-      const res = await fetch(
+      // Menggunakan axios untuk fetch data kategori
+      const res = await axios.get(
         "https://test-fe.mysellerpintar.com/api/categories"
       );
-      const data = await res.json();
-      setCategories(data.data);
-      setTotalPages(Math.ceil(data.data.length / categoriesPerPage));
+
+      // Pastikan response berhasil
+      setCategories(res.data.data);
+      setTotalPages(Math.ceil(res.data.data.length / categoriesPerPage));
     } catch (error) {
       console.error("Failed to fetch categories", error);
     }
@@ -84,70 +89,79 @@ export default function ArtikelListPage() {
     const token = getTokenFromCookie();
     if (!token) {
       console.error("Token not found in cookie");
+      toast.error("Token not found, please login.");
       return;
     }
 
     try {
-      const res = await fetch(
+      // Menggunakan axios untuk POST request
+      const res = await axios.post(
         "https://test-fe.mysellerpintar.com/api/categories",
         {
-          method: "POST",
+          name: newCategoryName,
+          userId: user.id,
+        },
+        {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({
-            name: newCategoryName,
-            userId: user.id,
-          }),
         }
       );
 
-      if (!res.ok) throw new Error("Failed to add category");
+      // Pastikan response status adalah sukses
+      if (res.status !== 200) throw new Error("Failed to add category");
 
-      fetchCategories();
+      fetchCategories(); // Refresh category list
       setNewCategoryName(""); // Clear input
+      toast.success("Category added successfully!");
     } catch (error) {
       console.error(error);
+      toast.error("Failed to add category.");
     }
   };
 
   const handleEditCategory = async () => {
     if (!editCategoryName.trim() || !editingCategoryId || !user) {
       console.error("User is not authenticated or invalid data");
+      toast.error("Please fill out all fields.");
       return;
     }
 
     const token = getTokenFromCookie();
     if (!token) {
       console.error("Token not found in cookie");
+      toast.error("Token not found, please login.");
       return;
     }
 
     try {
-      const res = await fetch(
+      // Menggunakan axios untuk PUT request
+      const res = await axios.put(
         `https://test-fe.mysellerpintar.com/api/categories/${editingCategoryId}`,
         {
-          method: "PUT",
+          name: editCategoryName,
+          userId: user.id,
+        },
+        {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({
-            name: editCategoryName,
-            userId: user.id,
-          }),
         }
       );
 
-      if (!res.ok) throw new Error("Failed to edit category");
+      // Pastikan response status adalah sukses
+      if (res.status !== 200) throw new Error("Failed to edit category");
 
-      fetchCategories();
+      fetchCategories(); // Refresh category list
       setIsEditModalOpen(false);
       setEditingCategoryId(null);
       setEditCategoryName(""); // Clear input
+      toast.success("Category edited successfully!");
     } catch (error) {
       console.error(error);
+      toast.error("Failed to edit category.");
     }
   };
 
@@ -156,14 +170,15 @@ export default function ArtikelListPage() {
     const token = getTokenFromCookie();
     if (!token) {
       console.error("Token not found in cookie");
+      toast.error("Token not found, please login.");
       return;
     }
 
     try {
-      const res = await fetch(
+      // Menggunakan axios untuk melakukan request DELETE
+      const res = await axios.delete(
         `https://test-fe.mysellerpintar.com/api/categories/${categoryToDelete}`,
         {
-          method: "DELETE",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
@@ -171,14 +186,24 @@ export default function ArtikelListPage() {
         }
       );
 
-      if (!res.ok) throw new Error("Failed to delete category");
+      // Pastikan response status adalah 200 atau 204 untuk sukses
+      if (res.status !== 200 && res.status !== 204) {
+        throw new Error("Failed to delete category");
+      }
 
+      // Panggil kembali fetchCategories untuk memperbarui daftar kategori
       fetchCategories();
+
+      // Reset modal dan kategori yang dihapus
       setIsDeleteModalOpen(false);
       setCategoryToDelete(null);
       setDeleteCategoryName("");
+
+      // Tampilkan toast sukses
+      toast.success("Category deleted successfully!");
     } catch (error) {
       console.error(error);
+      toast.error("Failed to delete category.");
     }
   };
 
@@ -304,11 +329,7 @@ export default function ArtikelListPage() {
       </div>
 
       <div className="flex justify-center items-center gap-2 mt-6 mb-4 pb-4">
-        <Button
-          onClick={handlePrevPage}
-          disabled={currentPage === 1}
-          size="sm"
-        >
+        <Button onClick={handlePrevPage} disabled={currentPage === 1} size="sm">
           Previous
         </Button>
 
@@ -348,7 +369,7 @@ export default function ArtikelListPage() {
         <Button
           onClick={handleNextPage}
           disabled={currentPage === totalPages}
-            size="sm"
+          size="sm"
         >
           Next
         </Button>

@@ -32,7 +32,7 @@ export function AppSidebar() {
       <SidebarHeader>
         <div className="text-xl font-bold p-4">
           {" "}
-          <Image src="/frame.png" alt="Logo" height={32} width={32} className="opacity-100" />
+          <Image src="/frame.png" alt="Logo" height={32} width={148} className="opacity-100" />
         </div>
       </SidebarHeader>
       <SidebarContent>

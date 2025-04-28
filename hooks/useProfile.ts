@@ -6,6 +6,7 @@ import { getTokenFromCookie } from "@/lib/auth";
 interface UserProfile {
   id: string;
   username: string;
+  role: String;
 }
 
 export function useProfile() {

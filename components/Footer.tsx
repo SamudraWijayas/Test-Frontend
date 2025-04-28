@@ -3,8 +3,8 @@ import Image from "next/image";
 
 const Footer = () => {
   return (
-<footer className="bg-blue-600 py-6 text-white text-sm flex items-center justify-center gap-4">
-  <div className="relative w-26 h-16 rounded-xl overflow-hidden">
+<footer className="bg-blue-600 py-6 text-white text-sm flex flex-col sm:flex-row items-center justify-center gap-4">
+  <div className="relative w-20 h-12 sm:w-26 sm:h-16 rounded-xl overflow-hidden">
     <Image
       src="/frame.png"
       alt="Man working with two monitors"

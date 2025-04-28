@@ -1,9 +1,12 @@
 "use client";
 import { useEffect, useState } from "react";
+import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import Link from "next/link";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 interface Category {
   id: string;
@@ -56,7 +59,8 @@ export default function EditArticleForm({
     }
 
     try {
-      const res = await fetch(
+      // Menggunakan axios untuk melakukan request GET
+      const res = await axios.get(
         "https://test-fe.mysellerpintar.com/api/categories",
         {
           headers: {
@@ -65,10 +69,13 @@ export default function EditArticleForm({
         }
       );
 
-      if (!res.ok) throw new Error("Failed to fetch categories");
+      // Pastikan response status adalah 200
+      if (res.status !== 200) {
+        throw new Error("Failed to fetch categories");
+      }
 
-      const data = await res.json();
-      setCategories(data.data);
+      // Ambil data dari response dan set ke state categories
+      setCategories(res.data.data);
     } catch (error) {
       console.error("Error fetching categories:", error);
     }
@@ -91,41 +98,32 @@ export default function EditArticleForm({
     }
 
     try {
-      const formData = new FormData();
-      formData.append("title", title);
-      formData.append("content", content);
-      formData.append("categoryId", category);
-
-      if (thumbnail) {
-        formData.append("image", thumbnail);
-      }
-
-      const res = await fetch(
+      const response = await axios.put(
         `https://test-fe.mysellerpintar.com/api/articles/${initialData.id}`,
         {
-          method: "PUT",
+          title: title,
+          content: content,
+          categoryId: category,
+        },
+        {
           headers: {
-            "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({
-            title: title,
-            content: content,
-            categoryId: category,
-          }),
         }
       );
 
       console.log("Update article with ID:", initialData.id);
+      console.log("Article updated:", response.data);
 
-      if (!res.ok) throw new Error("Failed to update article");
+      // Tampilkan pesan Toast sukses
+      toast.success("Artikel berhasil diperbarui!");
 
-      const data = await res.json();
-      console.log("Article updated:", data);
-      window.location.reload(); 
-      onCancel(); 
+      onCancel();
     } catch (error) {
       console.error("Error updating article:", error);
+
+      // Tampilkan pesan Toast error jika gagal
+      toast.error("Gagal memperbarui artikel!");
     }
   };
 

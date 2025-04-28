@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import Image from "next/image";
@@ -81,7 +82,7 @@ const Navbar = () => {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="bg-white w-40">
             <DropdownMenuItem>
-              <span className="text-sm text-gray-700 font-bold">Akun Saya</span>
+              <Link href="/dashboard/user/profile"><span className="text-sm text-gray-700 font-bold">Akun Saya</span></Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator className="border-t-2 border-gray-200/50 my-1" />
             <DropdownMenuItem>

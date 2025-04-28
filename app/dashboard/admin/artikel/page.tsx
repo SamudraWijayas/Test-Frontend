@@ -3,7 +3,10 @@
 import { useState, useEffect } from "react";
 import ArticleList from "@/components/article/ArticleList";
 import CreateArticleForm from "@/components/article/CreateArticleForm";
-import EditArticleForm from "@/components/article/EditArticleForm"; // Tambahin Import ini
+import EditArticleForm from "@/components/article/EditArticleForm";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import axios from "axios";
 
 interface Article {
   id: string;
@@ -40,23 +43,33 @@ export default function ArtikelListPage() {
   const [totalPages, setTotalPages] = useState(1);
   const [isCreating, setIsCreating] = useState(false);
   const [editingArticle, setEditingArticle] = useState<Article | null>(null);
-  const [, setDeletingArticleId] = useState<Article | null>(
-    null
-  );
+  const [, setDeletingArticleId] = useState<Article | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>(""); // New state for selected category
   const [searchQuery, setSearchQuery] = useState("");
 
   const articlesPerPage = 10;
 
   useEffect(() => {
-    // Fetching articles
-    fetch("https://test-fe.mysellerpintar.com/api/articles")
-      .then((res) => res.json())
-      .then((data) => {
-        setArticles(data.data);
-        setTotalPages(Math.ceil(data.data.length / articlesPerPage));
-      })
-      .catch((err) => console.error("Failed to fetch articles", err));
+    // Fetching articles with axios
+    const fetchArticles = async () => {
+      try {
+        const res = await axios.get(
+          "https://test-fe.mysellerpintar.com/api/articles"
+        );
+
+        // Pastikan status response OK
+        if (res.status === 200) {
+          setArticles(res.data.data);
+          setTotalPages(Math.ceil(res.data.data.length / articlesPerPage));
+        } else {
+          throw new Error("Failed to fetch articles");
+        }
+      } catch (err) {
+        console.error("Failed to fetch articles", err);
+      }
+    };
+
+    fetchArticles();
   }, []);
 
   const fetchCategories = async () => {
@@ -67,7 +80,7 @@ export default function ArtikelListPage() {
     }
 
     try {
-      const res = await fetch(
+      const res = await axios.get(
         "https://test-fe.mysellerpintar.com/api/categories",
         {
           headers: {
@@ -76,11 +89,13 @@ export default function ArtikelListPage() {
         }
       );
 
-      if (!res.ok) throw new Error("Failed to fetch categories");
+      // Pastikan status response OK
+      if (res.status !== 200) {
+        throw new Error("Failed to fetch categories");
+      }
 
-      const data = await res.json();
-      console.log("Fetched categories:", data);
-      setCategories(data.data); // <-- ambil dari data.data
+      console.log("Fetched categories:", res.data);
+      setCategories(res.data.data); // <-- ambil dari res.data.data
     } catch (error) {
       console.error("Error fetching categories:", error);
     }
@@ -126,17 +141,18 @@ export default function ArtikelListPage() {
     }
 
     try {
-      const res = await fetch(
+      // Menggunakan axios untuk melakukan request DELETE
+      const res = await axios.delete(
         `https://test-fe.mysellerpintar.com/api/articles/${article.id}`,
         {
-          method: "DELETE",
           headers: {
             Authorization: `Bearer ${token}`,
           },
         }
       );
 
-      if (!res.ok) {
+      // Pastikan status response OK
+      if (res.status !== 200) {
         throw new Error("Failed to delete article");
       }
 
@@ -149,9 +165,14 @@ export default function ArtikelListPage() {
 
       // Reset deletingArticleId state
       setDeletingArticleId(null);
+
+      // Tampilkan pesan Toast saat artikel berhasil dihapus
+      toast.success("Artikel berhasil dihapus!");
     } catch (error) {
       console.error("Error deleting article:", error);
-      alert("Failed to delete article");
+
+      // Tampilkan pesan Toast jika gagal menghapus artikel
+      toast.error("Gagal menghapus artikel!");
     }
   };
 

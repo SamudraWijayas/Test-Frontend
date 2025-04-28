@@ -34,7 +34,7 @@ export default function RegisterPage() {
       await axios.post("/auth/register", data);
 
       // Redirect ke halaman login setelah registrasi berhasil
-      router.push("/login");
+      router.push("/");
     } catch (err) {
       console.error("Registration failed:", err);
     }

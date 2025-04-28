@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
+import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
@@ -14,6 +15,8 @@ import {
   AlignCenter,
   AlignRight,
 } from "lucide-react"; // pake icon lucide-react
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 // Helper function ambil token dari cookie
 function getTokenFromCookie() {
@@ -57,7 +60,8 @@ export default function CreateArticleForm({
     }
 
     try {
-      const res = await fetch(
+      // Menggunakan axios untuk melakukan request GET
+      const res = await axios.get(
         "https://test-fe.mysellerpintar.com/api/categories",
         {
           headers: {
@@ -66,11 +70,14 @@ export default function CreateArticleForm({
         }
       );
 
-      if (!res.ok) throw new Error("Failed to fetch categories");
+      // Pastikan status response adalah 200
+      if (res.status !== 200) {
+        throw new Error("Failed to fetch categories");
+      }
 
-      const data = await res.json();
-      console.log("Fetched categories:", data);
-      setCategories(data.data); // <-- ambil dari data.data
+      // Ambil data dari response dan set ke state categories
+      console.log("Fetched categories:", res.data);
+      setCategories(res.data.data); // <-- ambil dari data.data
     } catch (error) {
       console.error("Error fetching categories:", error);
     }
@@ -83,45 +90,51 @@ export default function CreateArticleForm({
   const handleSubmit = async () => {
     const token = getTokenFromCookie();
     if (!token) {
-      alert("Authentication required");
+      toast.error("Authentication required");
       return;
     }
 
     if (!title || !content || !category) {
-      alert("Please fill in all the fields.");
+      toast.warn("Please fill in all the fields.");
       return;
     }
 
     try {
-      const res = await fetch(
+      // Menggunakan axios untuk melakukan request POST
+      const res = await axios.post(
         "https://test-fe.mysellerpintar.com/api/articles",
         {
-          method: "POST",
+          title: title,
+          content: content,
+          categoryId: category,
+        },
+        {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({
-            title: title,
-            content: content,
-            categoryId: category,
-          }),
         }
       );
 
-      if (!res.ok) throw new Error("Failed to create article");
+      // Pastikan status response adalah 200 atau 201 untuk sukses
+      if (res.status !== 200 && res.status !== 201) {
+        throw new Error("Failed to create article");
+      }
 
-      const data = await res.json();
+      const data = res.data;
       console.log("Article created:", data);
+
+      // Tampilkan toast sukses
+      toast.success("Article created successfully!");
 
       // Reset form setelah upload
       setTitle("");
       setCategory("");
       setContent("");
-      window.location.reload();
       onCancel();
     } catch (error) {
       console.error("Error creating article:", error);
+      toast.error("Error creating article!");
     }
   };
   const handleCommand = (command: string, value?: string) => {
