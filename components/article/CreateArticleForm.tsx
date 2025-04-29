@@ -14,7 +14,7 @@ import {
   AlignLeft,
   AlignCenter,
   AlignRight,
-} from "lucide-react"; // pake icon lucide-react
+} from "lucide-react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ArrowLeft } from "lucide-react";

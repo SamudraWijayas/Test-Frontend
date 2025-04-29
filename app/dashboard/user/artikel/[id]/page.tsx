@@ -75,7 +75,10 @@ export default async function DetailArtikelPage({
               />
             </div>
 
-            <p className="mb-4">{article.content}</p>
+            <div
+              className="mb-4"
+              dangerouslySetInnerHTML={{ __html: article.content }}
+            ></div>
           </article>
 
           <section className="mt-12">

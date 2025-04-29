@@ -93,7 +93,7 @@ export default function ArtikelListPage() {
       }
 
       console.log("Fetched categories:", res.data);
-      setCategories(res.data.data); 
+      setCategories(res.data.data);
     } catch (error) {
       console.error("Error fetching categories:", error);
     }
@@ -102,6 +102,7 @@ export default function ArtikelListPage() {
   useEffect(() => {
     fetchCategories();
   }, []);
+
   const filteredArticles = articles.filter((article) => {
     const matchesSearch = article.title
       .toLowerCase()
@@ -161,15 +162,12 @@ export default function ArtikelListPage() {
 
       const updatedArticles = articles.filter((a) => a.id !== article.id);
       setArticles(updatedArticles);
-
       setTotalPages(Math.ceil(updatedArticles.length / articlesPerPage));
-
       setDeletingArticleId(null);
 
       toast.success("Artikel berhasil dihapus!");
     } catch (error) {
       console.error("Error deleting article:", error);
-
       toast.error("Gagal menghapus artikel!");
     }
   };
@@ -186,21 +184,21 @@ export default function ArtikelListPage() {
       ) : (
         <ArticleList
           articles={articles}
-          currentArticles={currentArticles} 
+          currentArticles={currentArticles}
           currentPage={currentPage}
           totalPages={totalPages}
           filteredCategories={filteredArticles}
-          categories={categories} 
+          categories={categories}
           selectedCategory={selectedCategory}
-          setSelectedCategory={setSelectedCategory} 
+          setSelectedCategory={setSelectedCategory}
           handlePrevPage={handlePrevPage}
           handleNextPage={handleNextPage}
           onAddArticle={() => setIsCreating(true)}
           onEditArticle={handleEditArticle}
           onDeleteArticle={handleDeleteArticle}
           searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery} 
-          setCurrentPage={setCurrentPage} 
+          setSearchQuery={setSearchQuery}
+          setCurrentPage={setCurrentPage}
         />
       )}
     </main>
