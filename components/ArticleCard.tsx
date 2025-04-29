@@ -31,7 +31,10 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
       <div className="p-4">
         <p className="text-sm text-gray-500 mb-2">{date}</p>
         <h3 className="text-lg font-semibold mb-2 line-clamp-2">{title}</h3>
-        <p className="text-gray-600 mb-4 line-clamp-3">{description}</p>
+        <div
+          className="mb-4 line-clamp-3"
+          dangerouslySetInnerHTML={{ __html: description }}
+        ></div>
         <div className="flex flex-wrap gap-2">
           {tags.map((tag, idx) => (
             <span
