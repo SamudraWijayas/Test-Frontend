@@ -79,9 +79,9 @@ export default function LoginPage() {
 
       // Redirect berdasarkan role
       if (role.toLowerCase() === "admin") {
-        setTimeout(() => router.push("/dashboard/admin/artikel"), 1000);
+        setTimeout(() => router.push("/dashboard/admin/artikel"));
       } else {
-        setTimeout(() => router.push("/dashboard/user/artikel"), 1000);
+        setTimeout(() => router.push("/dashboard/user/artikel"));
       }
     } catch (err) {
       console.error("Login failed:", err);

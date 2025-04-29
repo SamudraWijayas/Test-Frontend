@@ -17,6 +17,7 @@ import {
 } from "lucide-react"; // pake icon lucide-react
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { ArrowLeft } from "lucide-react";
 
 // Helper function ambil token dari cookie
 function getTokenFromCookie() {
@@ -161,9 +162,9 @@ export default function CreateArticleForm({
     <div className="p-4">
       <button
         onClick={onCancel}
-        className="text-sm text-blue-500 hover:underline mb-4"
+        className="flex items-center text-sm text-black hover:underline mb-4"
       >
-        ← Back to Articles
+        <ArrowLeft className="mr-2" /> Create Articles
       </button>
 
       <div className="bg-white p-6 rounded-lg shadow">

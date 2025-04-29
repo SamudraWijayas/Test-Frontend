@@ -47,10 +47,9 @@ export default function ArtikelListPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>(""); // New state for selected category
   const [searchQuery, setSearchQuery] = useState("");
 
-  const articlesPerPage = 10;
+  const articlesPerPage = 9;
 
   useEffect(() => {
-    // Fetching articles with axios
     const fetchArticles = async () => {
       try {
         const res = await axios.get(
@@ -89,13 +88,12 @@ export default function ArtikelListPage() {
         }
       );
 
-      // Pastikan status response OK
       if (res.status !== 200) {
         throw new Error("Failed to fetch categories");
       }
 
       console.log("Fetched categories:", res.data);
-      setCategories(res.data.data); // <-- ambil dari res.data.data
+      setCategories(res.data.data); 
     } catch (error) {
       console.error("Error fetching categories:", error);
     }
@@ -104,14 +102,7 @@ export default function ArtikelListPage() {
   useEffect(() => {
     fetchCategories();
   }, []);
-  const indexOfLastArticle = currentPage * articlesPerPage;
-  const indexOfFirstArticle = indexOfLastArticle - articlesPerPage;
-  const currentArticles = articles.slice(
-    indexOfFirstArticle,
-    indexOfLastArticle
-  );
-
-  const filteredArticles = currentArticles.filter((article) => {
+  const filteredArticles = articles.filter((article) => {
     const matchesSearch = article.title
       .toLowerCase()
       .includes(searchQuery.toLowerCase());
@@ -120,6 +111,20 @@ export default function ArtikelListPage() {
       : true;
     return matchesSearch && matchesCategory;
   });
+
+  useEffect(() => {
+    setTotalPages(Math.ceil(filteredArticles.length / articlesPerPage));
+    if (currentPage > Math.ceil(filteredArticles.length / articlesPerPage)) {
+      setCurrentPage(1);
+    }
+  }, [filteredArticles, currentPage]);
+
+  const indexOfLastArticle = currentPage * articlesPerPage;
+  const indexOfFirstArticle = indexOfLastArticle - articlesPerPage;
+  const currentArticles = filteredArticles.slice(
+    indexOfFirstArticle,
+    indexOfLastArticle
+  );
 
   const handlePrevPage = () => {
     if (currentPage > 1) setCurrentPage(currentPage - 1);
@@ -141,7 +146,6 @@ export default function ArtikelListPage() {
     }
 
     try {
-      // Menggunakan axios untuk melakukan request DELETE
       const res = await axios.delete(
         `https://test-fe.mysellerpintar.com/api/articles/${article.id}`,
         {
@@ -150,28 +154,22 @@ export default function ArtikelListPage() {
           },
         }
       );
-
       // Pastikan status response OK
       if (res.status !== 200) {
         throw new Error("Failed to delete article");
       }
 
-      // Update articles state by removing deleted article
       const updatedArticles = articles.filter((a) => a.id !== article.id);
       setArticles(updatedArticles);
 
-      // Update total pages
       setTotalPages(Math.ceil(updatedArticles.length / articlesPerPage));
 
-      // Reset deletingArticleId state
       setDeletingArticleId(null);
 
-      // Tampilkan pesan Toast saat artikel berhasil dihapus
       toast.success("Artikel berhasil dihapus!");
     } catch (error) {
       console.error("Error deleting article:", error);
 
-      // Tampilkan pesan Toast jika gagal menghapus artikel
       toast.error("Gagal menghapus artikel!");
     }
   };
@@ -188,21 +186,21 @@ export default function ArtikelListPage() {
       ) : (
         <ArticleList
           articles={articles}
-          currentArticles={filteredArticles} // Pass filtered articles here
+          currentArticles={currentArticles} 
           currentPage={currentPage}
           totalPages={totalPages}
           filteredCategories={filteredArticles}
-          categories={categories} // Pass categories to ArticleList
+          categories={categories} 
           selectedCategory={selectedCategory}
-          setSelectedCategory={setSelectedCategory} // Pass setter function for category
+          setSelectedCategory={setSelectedCategory} 
           handlePrevPage={handlePrevPage}
           handleNextPage={handleNextPage}
           onAddArticle={() => setIsCreating(true)}
           onEditArticle={handleEditArticle}
           onDeleteArticle={handleDeleteArticle}
           searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery} // Pass setter function for search query
-          setCurrentPage={setCurrentPage} // 🔥 INI DITAMBAH
+          setSearchQuery={setSearchQuery} 
+          setCurrentPage={setCurrentPage} 
         />
       )}
     </main>

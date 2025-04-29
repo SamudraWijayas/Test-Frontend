@@ -60,6 +60,7 @@ function formatDate(dateString: string) {
 }
 
 export default function ArticleList({
+  articles,
   currentArticles,
   currentPage,
   totalPages,
@@ -99,7 +100,7 @@ export default function ArticleList({
     <div>
       <div className="flex justify-between items-center p-4">
         <h1 className="text-2xl font-bold">
-          Total Articles : {currentArticles.length}
+          Total Articles : {articles.length}
         </h1>
       </div>
       <hr className="border-b-1 border-gray-300/50 my-2" />
